@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 import streamlit as st
 import requests
 from io import BytesIO
@@ -71,20 +73,27 @@ def generate_heatmap(cysteine_positions):
     st.write(f"Pascal's Triangle Row for {num_cysteines} Cysteines with Redox Percentages: {pascal_with_percentages}")
     
     # Create a heatmap
-    fig, ax = plt.subplots(figsize=(12, min(60, num_cysteines * 3)))
-    sns.heatmap(data, cmap="Greys", cbar=False, linewidths=0.5, linecolor='gray', ax=ax)
-    ax.set_facecolor('black')
-    plt.title("Cysteine Redox Proteoforms", fontsize=20)
-    plt.xlabel("Cysteine Sites", fontsize=15)
-    plt.ylabel("Proteoforms", fontsize=15)
-    plt.xticks(ticks=np.arange(0.5, num_cysteines + 0.5), labels=cysteine_positions, fontsize=12)
-    plt.yticks(fontsize=10)
+    try:
+        # Adjust the figure size
+        figsize = (12, min(60, num_cysteines * 3))  # Ensure it doesn't become too large
+        fig, ax = plt.subplots(figsize=figsize)
+        sns.heatmap(data, cmap="Greys", cbar=False, linewidths=0.5, linecolor='gray', ax=ax)
+        ax.set_facecolor('black')
+        plt.title("Cysteine Redox Proteoforms", fontsize=20)
+        plt.xlabel("Cysteine Sites", fontsize=15)
+        plt.ylabel("Proteoforms", fontsize=15)
+        plt.xticks(ticks=np.arange(0.5, num_cysteines + 0.5), labels=cysteine_positions, fontsize=12)
+        plt.yticks(fontsize=10)
+        
+        # Save figure to a BytesIO object
+        buf = BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight')
+        buf.seek(0)
+        return buf
     
-    # Save figure to a BytesIO object
-    buf = BytesIO()
-    plt.savefig(buf, format='png', dpi=300, bbox_inches='tight')
-    buf.seek(0)
-    return buf
+    except Exception as e:
+        st.error(f"Error generating heatmap: {e}")
+        return None
 
 # Streamlit app
 st.title('Cysteine Redox Proteoforms Diagram')
@@ -105,17 +114,19 @@ if uniprot_id:
             if num_cysteines <= MAX_CYSTEINES_FOR_HEATMAP:
                 buf = generate_heatmap(cysteine_positions)
                 
-                # Display the plot
-                st.image(buf, use_column_width=True, caption='Cysteine Redox Proteoforms Heatmap')
+                if buf:
+                    # Display the plot
+                    st.image(buf, use_column_width=True, caption='Cysteine Redox Proteoforms Heatmap')
 
-                # Download button
-                buf.seek(0)
-                st.download_button(
-                    label="Download Heatmap",
-                    data=buf,
-                    file_name="Cysteine_Redox_Proteoforms.png",
-                    mime="image/png"
-                )
+                    # Download button
+                    buf.seek(0)
+                    st.download_button(
+                        label="Download Heatmap",
+                        data=buf,
+                        file_name="Cysteine_Redox_Proteoforms.png",
+                        mime="image/png"
+                    )
             else:
                 _, grouped_proteoforms = generate_proteoforms(num_cysteines)
                 display_binary_proteoforms(grouped_proteoforms, cysteine_positions)
+
