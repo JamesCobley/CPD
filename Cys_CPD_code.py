@@ -20,7 +20,7 @@ def fetch_protein_sequence(uniprot_id):
 
 def get_cysteine_positions(sequence):
     """Get positions of cysteine residues (C) in the protein sequence"""
-    cysteine_positions = [i for i, res in enumerate(sequence) if res == 'C']
+    cysteine_positions = [i + 1 for i, res in enumerate(sequence) if res == 'C']  # Adjust to start from 1
     return cysteine_positions
 
 def generate_heatmap(cysteine_positions):
@@ -37,6 +37,8 @@ def generate_heatmap(cysteine_positions):
     
     data = np.array(proteoforms)
     
+    st.write(f"Number of combinations: {len(proteoforms)}")  # Print the number of combinations
+    
     # Create a heatmap
     fig, ax = plt.subplots(figsize=(12, 60))
     sns.heatmap(data, cmap="Greys", cbar=False, linewidths=0.5, linecolor='gray', ax=ax)
@@ -44,7 +46,7 @@ def generate_heatmap(cysteine_positions):
     plt.title("Cysteine Redox Proteoforms", fontsize=20)
     plt.xlabel("Cysteine Sites", fontsize=15)
     plt.ylabel("Proteoforms", fontsize=15)
-    plt.xticks(ticks=np.arange(0.5, num_cysteines + 0.5), labels=np.arange(1, num_cysteines + 1), fontsize=12)
+    plt.xticks(ticks=np.arange(0.5, num_cysteines + 0.5), labels=cysteine_positions, fontsize=12)
     plt.yticks(fontsize=10)
     
     # Save figure to a BytesIO object
