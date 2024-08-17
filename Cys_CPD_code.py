@@ -9,20 +9,20 @@ from scipy.special import comb  # Import comb for binomial coefficients
 
 def fetch_protein_sequence(uniprot_id):
     """Fetch protein sequence from UniProt"""
-    url = f"https://www.uniprot.org/uniprot/{uniprot_id}.fasta"
-    response = requests.get(url)
-    if response.status_code == 200:
+    try:
+        url = f"https://www.uniprot.org/uniprot/{uniprot_id}.fasta"
+        response = requests.get(url)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
         fasta = response.text
         sequence = ''.join(fasta.split('\n')[1:]).replace(' ', '')
         return sequence
-    else:
-        st.error(f"Failed to fetch data for UniProt ID {uniprot_id}")
+    except requests.RequestException as e:
+        st.error(f"Failed to fetch data for UniProt ID {uniprot_id}: {e}")
         return None
 
 def get_cysteine_positions(sequence):
     """Get positions of cysteine residues (C) in the protein sequence"""
-    cysteine_positions = [i + 1 for i, res in enumerate(sequence) if res == 'C']  # Adjust to start from 1
-    return cysteine_positions
+    return [i + 1 for i, res in enumerate(sequence) if res == 'C']  # Adjust to start from 1
 
 def generate_heatmap(cysteine_positions):
     """Generate a heatmap based on the cysteine positions"""
@@ -30,7 +30,7 @@ def generate_heatmap(cysteine_positions):
     proteoforms = []
     
     # Generate all unique proteoforms
-    for i in range(num_cysteines + 1):  # From 0 to num_cysteines cysteines oxidized
+    for i in range(num_cysteines + 1):
         for combi in combinations(range(num_cysteines), i):
             proteoform = np.zeros(num_cysteines, dtype=int)
             proteoform[list(combi)] = 1
@@ -48,13 +48,13 @@ def generate_heatmap(cysteine_positions):
     # Combine Pascal row with redox percentages
     pascal_with_percentages = [f"{value} ({percentage:.1f}%)" for value, percentage in zip(pascal_row, redox_grades)]
     
-    st.write(f"Number of combinations: {total_proteoforms}")  # Print the number of combinations
+    st.write(f"Number of combinations: {total_proteoforms}")
     st.write(f"Pascal's Triangle Row for {num_cysteines} Cysteines with Redox Percentages: {pascal_with_percentages}")
     
     # Create a heatmap
     fig, ax = plt.subplots(figsize=(12, 60))
     sns.heatmap(data, cmap="Greys", cbar=False, linewidths=0.5, linecolor='gray', ax=ax)
-    ax.set_facecolor('black')  # Set the background color of the cells that have no line
+    ax.set_facecolor('black')
     plt.title("Cysteine Redox Proteoforms", fontsize=20)
     plt.xlabel("Cysteine Sites", fontsize=15)
     plt.ylabel("Proteoforms", fontsize=15)
@@ -96,4 +96,3 @@ if uniprot_id:
                 file_name="Cysteine_Redox_Proteoforms.png",
                 mime="image/png"
             )
-
