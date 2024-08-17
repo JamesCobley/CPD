@@ -4,7 +4,7 @@ import seaborn as sns
 import streamlit as st
 import requests
 from io import BytesIO
-from itertools import combinations  # Import combinations
+from itertools import combinations
 
 def fetch_protein_sequence(uniprot_id):
     """Fetch protein sequence from UniProt"""
@@ -23,11 +23,14 @@ def get_cysteine_positions(sequence):
     cysteine_positions = [i for i, res in enumerate(sequence) if res == 'C']
     return cysteine_positions
 
-def generate_heatmap(num_cysteines, cysteine_positions):
-    """Generate a heatmap based on the number of cysteines"""
+def generate_heatmap(cysteine_positions):
+    """Generate a heatmap based on the cysteine positions"""
+    num_cysteines = len(cysteine_positions)
     proteoforms = []
+    
+    # Generate all unique proteoforms
     for i in range(num_cysteines + 1):  # From 0 to num_cysteines cysteines oxidized
-        for comb in combinations(cysteine_positions, i):
+        for comb in combinations(range(num_cysteines), i):
             proteoform = np.zeros(num_cysteines, dtype=int)
             proteoform[list(comb)] = 1
             proteoforms.append(proteoform)
@@ -66,7 +69,7 @@ if uniprot_id:
         st.write("Cysteine Positions:", cysteine_positions)
 
         if num_cysteines > 0:
-            buf = generate_heatmap(num_cysteines, cysteine_positions)
+            buf = generate_heatmap(cysteine_positions)
             
             # Display the plot
             st.image(buf, use_column_width=True, caption='Cysteine Redox Proteoforms Heatmap')
