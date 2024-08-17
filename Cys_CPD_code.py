@@ -5,7 +5,7 @@ import streamlit as st
 import requests
 from io import BytesIO
 from itertools import combinations
-from scipy.special import comb  # For binomial coefficients
+from scipy.special import comb  # Import comb for binomial coefficients
 
 def fetch_protein_sequence(uniprot_id):
     """Fetch protein sequence from UniProt"""
@@ -31,17 +31,17 @@ def generate_heatmap(cysteine_positions):
     
     # Generate all unique proteoforms
     for i in range(num_cysteines + 1):  # From 0 to num_cysteines cysteines oxidized
-        for comb in combinations(range(num_cysteines), i):
+        for combi in combinations(range(num_cysteines), i):
             proteoform = np.zeros(num_cysteines, dtype=int)
-            proteoform[list(comb)] = 1
+            proteoform[list(combi)] = 1
             proteoforms.append(proteoform)
     
     data = np.array(proteoforms)
     
-    # Calculate Pascal's triangle row
-    pascal_row = [int(com(num_cysteines, k)) for k in range(num_cysteines + 1)]
-
-    st.write(f"i space: {len(proteoforms)}")  # Print the number of combinations
+    # Calculate Pascal's Triangle row
+    pascal_row = [int(comb(num_cysteines, k, exact=True)) for k in range(num_cysteines + 1)]
+    
+    st.write(f"Number of combinations: {len(proteoforms)}")  # Print the number of combinations
     st.write(f"Pascal's Triangle Row for {num_cysteines} Cysteines: {pascal_row}")
     
     # Create a heatmap
@@ -61,7 +61,7 @@ def generate_heatmap(cysteine_positions):
     return buf
 
 # Streamlit app
-st.title('Cysteine Redox Proteoforms Diagram')
+st.title('Cysteine Redox Proteoforms Heatmap')
 
 uniprot_id = st.text_input("Enter UniProt Accession Number:", "P12345")
 
