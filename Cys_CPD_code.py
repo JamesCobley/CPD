@@ -7,7 +7,7 @@ from io import BytesIO
 from itertools import combinations
 from scipy.special import comb
 
-MAX_CYSTEINES_FOR_HEATMAP = 20  # Threshold for switching to binary display
+MAX_CYSTEINES_FOR_HEATMAP = 15  # Threshold for switching to binary display
 
 def fetch_protein_sequence(uniprot_id):
     """Fetch protein sequence from UniProt"""
