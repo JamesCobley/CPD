@@ -37,7 +37,7 @@ def generate_heatmap(cysteine_positions):
     
     data = np.array(proteoforms)
     
-    st.write(f"Number of combinations: {len(proteoforms)}")  # Print the number of combinations
+    st.write(f"i space: {len(proteoforms)}")  # Print the number of combinations
     
     # Create a heatmap
     fig, ax = plt.subplots(figsize=(12, 60))
@@ -56,7 +56,7 @@ def generate_heatmap(cysteine_positions):
     return buf
 
 # Streamlit app
-st.title('Cysteine Redox Proteoforms Heatmap')
+st.title('Cysteine Redox Proteoforms Diagram')
 
 uniprot_id = st.text_input("Enter UniProt Accession Number:", "P12345")
 
