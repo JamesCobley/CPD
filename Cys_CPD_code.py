@@ -41,8 +41,15 @@ def generate_heatmap(cysteine_positions):
     # Calculate Pascal's Triangle row
     pascal_row = [int(comb(num_cysteines, k, exact=True)) for k in range(num_cysteines + 1)]
     
-    st.write(f"Number of combinations: {len(proteoforms)}")  # Print the number of combinations
-    st.write(f"Pascal's Triangle Row for {num_cysteines} Cysteines: {pascal_row}")
+    # Calculate percentage redox grades
+    total_proteoforms = len(proteoforms)
+    redox_grades = [(count / total_proteoforms) * 100 for count in pascal_row]
+    
+    # Combine Pascal row with redox percentages
+    pascal_with_percentages = [f"{value} ({percentage:.1f}%)" for value, percentage in zip(pascal_row, redox_grades)]
+    
+    st.write(f"Number of combinations: {total_proteoforms}")  # Print the number of combinations
+    st.write(f"Pascal's Triangle Row for {num_cysteines} Cysteines with Redox Percentages: {pascal_with_percentages}")
     
     # Create a heatmap
     fig, ax = plt.subplots(figsize=(12, 60))
