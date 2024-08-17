@@ -5,6 +5,7 @@ import streamlit as st
 import requests
 from io import BytesIO
 from itertools import combinations
+from scipy.special import comb  # For binomial coefficients
 
 def fetch_protein_sequence(uniprot_id):
     """Fetch protein sequence from UniProt"""
@@ -37,7 +38,11 @@ def generate_heatmap(cysteine_positions):
     
     data = np.array(proteoforms)
     
+    # Calculate Pascal's triangle row
+    pascal_row = [int(com(num_cysteines, k)) for k in range(num_cysteines + 1)]
+
     st.write(f"i space: {len(proteoforms)}")  # Print the number of combinations
+    st.write(f"Pascal's Triangle Row for {num_cysteines} Cysteines: {pascal_row}")
     
     # Create a heatmap
     fig, ax = plt.subplots(figsize=(12, 60))
