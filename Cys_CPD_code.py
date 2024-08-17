@@ -50,8 +50,8 @@ def generate_heatmap(cysteine_positions):
     # Number of redox grades
     num_redox_grades = len(pascal_row)
     
-    st.write(f"Number of redox grades: {num_redox_grades}")
-    st.write(f"Number of combinations: {len(proteoforms)}")
+    st.write(f"Number of % redox grades: {num_redox_grades}")
+    st.write(f"i space: {len(proteoforms)}")
     st.write(f"Pascal's Triangle Row for {num_cysteines} Cysteines with Redox Percentages: {pascal_with_percentages}")
     
     # Create a heatmap
@@ -71,7 +71,7 @@ def generate_heatmap(cysteine_positions):
     return buf
 
 # Streamlit app
-st.title('Cysteine Redox Proteoforms Heatmap')
+st.title('Cysteine Redox Proteoforms Diagram')
 
 uniprot_id = st.text_input("Enter UniProt Accession Number:", "P12345")
 
