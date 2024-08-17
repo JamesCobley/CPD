@@ -4,6 +4,7 @@ import seaborn as sns
 import streamlit as st
 import requests
 from io import BytesIO
+from itertools import combinations  # Import combinations
 
 def fetch_protein_sequence(uniprot_id):
     """Fetch protein sequence from UniProt"""
