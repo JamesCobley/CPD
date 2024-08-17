@@ -96,3 +96,4 @@ if uniprot_id:
                 file_name="Cysteine_Redox_Proteoforms.png",
                 mime="image/png"
             )
+
